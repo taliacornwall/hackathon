@@ -1,15 +1,10 @@
 var express = require('express');
+var app = express();
 var google = require('./oauth2');
 var youtube = require('./youtube');
 var path = require('path');
 
-var app = express();
-
 app.use(express.static(path.join(__dirname, '/public')));
-
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
-});
 
 app.get('/', function (req, res) {
   res.sendFile('index.html');
@@ -36,7 +31,19 @@ app.get('/oauth', function (req, res) {
 app.get('/youtube', function(req, res){
   console.log('Getting youtube data ...');
 
-	var json = youtube.searchYoutube("", function(json){
+	var json = youtube.search("Some query term", "", function(json){
     res.status(200).json(json);
   });
+});
+
+app.get('/youtubeAll', function(req, res){
+  console.log('Getting youtube data ...');
+
+  var json = youtube.paginatedSearch("", "", function(json){
+    res.status(200).json(json);
+  });
+});
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!')
 });

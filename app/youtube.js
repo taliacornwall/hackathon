@@ -7,26 +7,36 @@ var youtube = google.youtube({
   auth: oauthClient.client
 });
 
-// a very simple example of searching for youtube videos
-function searchYoutube (query, callback) {
-
+function search(query, pageToken, callback) {
   console.log('Searching youtube...')
 
   youtube.search.list({
-    part: 'id,snippet, statistics',
-    q: 'Node.js on Google Cloud'
+    part: 'id,snippet',
+    q: query,
+    pageToken: pageToken
   }, function (err, data) {
 
     var response;
     if (err) {
       response = {error: + err};
+      console.log(err);
     }
     if (data) {
       response = data;
     }
-    console.log(response);
     callback(response);
   });
 };
 
-module.exports.searchYoutube = searchYoutube;
+function paginatedSearch(query, pageToken, callback){
+
+  var results = [];
+
+  search(query, "", function(response){
+    results.push(response);
+    callback(results);
+  });
+}
+
+module.exports.search = search;
+module.exports.paginatedSearch = paginatedSearch;
