@@ -41,30 +41,33 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        var query = $('#queryInput').val();
+      var query = $('#queryInput').val();
 
-        $.getJSON(
-            "http://localhost:3000/youtube", 
-            function(resp) {
+      $.getJSON(
+        "http://localhost:3000/youtubeAll",
+        {queryTerm: query}, 
+        function(resp) {
 
-                var items = resp.items,
+          tableData = [];
 
-                tableData = [];
+          // Iterate over the pages
+          $.each(resp, function(index, page){
 
-                tableau.log("Hello WDC!");
+              var items = page.items;
 
-                // Iterate over the JSON object
-                for (var i = 0, len = items.length; i < len; i++) {
-                    tableData.push({
-                        "id": items[i].id.videoId,
-                        "publishedAt": items[i].snippet.publishedAt,
-                        "channelId": items[i].snippet.channelId,
-                        "channelTitle": items[i].snippet.channelTitle,
-                    });
-                }
-
-                table.appendRows(tableData);
-            });
+              // Iterate over the JSON object
+              $.each(items, function(index, val){
+                  tableData.push({
+                      "id": val.id.videoId,
+                      "publishedAt": val.snippet.publishedAt,
+                      "channelId": val.snippet.channelId,
+                      "channelTitle": val.snippet.channelTitle,
+                  });
+              });
+          });
+          table.appendRows(tableData);
+          doneCallback();
+      });
     };
 
     tableau.registerConnector(myConnector);

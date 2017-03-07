@@ -28,24 +28,21 @@ function search(query, pageToken, callback) {
   });
 };
 
+var rateLimitedPages = 5;
+
 function searchAll(query, pageToken, callback, resultsSoFar){
+
   search(query, pageToken, function(response){
     resultsSoFar.push(response);
-    if (hasMorePages(response)){
-      search(query, response.pageToken, callback, resultsSoFar)
+    if (response.nextPageToken && resultsSoFar.length < rateLimitedPages){
+      searchAll(query, response.nextPageToken, callback, resultsSoFar);
     } else {
       callback(resultsSoFar);
     }
   });
 }
 
-function hasMorePages(response){
-  return false;
-}
-
 function paginatedSearch(query, callback){
-
-  console.log(query);
   var results = [];
   searchAll(query, "", callback, results);
 }
