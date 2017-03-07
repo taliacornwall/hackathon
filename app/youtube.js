@@ -28,14 +28,26 @@ function search(query, pageToken, callback) {
   });
 };
 
-function paginatedSearch(query, pageToken, callback){
-
-  var results = [];
-
-  search(query, "", function(response){
-    results.push(response);
-    callback(results);
+function searchAll(query, pageToken, callback, resultsSoFar){
+  search(query, pageToken, function(response){
+    resultsSoFar.push(response);
+    if (hasMorePages(response)){
+      search(query, response.pageToken, callback, resultsSoFar)
+    } else {
+      callback(resultsSoFar);
+    }
   });
+}
+
+function hasMorePages(response){
+  return false;
+}
+
+function paginatedSearch(query, callback){
+
+  console.log(query);
+  var results = [];
+  searchAll(query, "", callback, results);
 }
 
 module.exports.search = search;

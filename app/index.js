@@ -36,10 +36,12 @@ app.get('/youtube', function(req, res){
   });
 });
 
-app.get('/youtubeAll', function(req, res){
+app.get('/youtubeAll/:query', function(req, res){
   console.log('Getting youtube data ...');
 
-  var json = youtube.paginatedSearch("", "", function(json){
+  var query = req.params.query;
+
+  var json = youtube.paginatedSearch(query, function(json){
     res.status(200).json(json);
   });
 });
