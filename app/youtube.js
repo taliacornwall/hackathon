@@ -7,8 +7,27 @@ var youtube = google.youtube({
   auth: oauthClient.client
 });
 
-var search = function(query, pageToken, callback) {
-  console.log('Searching youtube...')
+var searchChannels = function(pageToken, callback) {
+  console.log('Searching youtube channels...')
+
+  youtube.channels.list({
+    part: 'id,snippet',
+    pageToken: pageToken
+  }, function (err, data) {
+
+    var response;
+    if (err) {
+      response = {error: + err};
+      console.log(err);
+    }
+    if (data) {
+      response = data;
+    }
+    callback(response);
+  });
+};
+
+var searchVideos = function(query, pageToken, callback) {
 
   youtube.search.list({
     part: 'id,snippet',
@@ -28,7 +47,7 @@ var search = function(query, pageToken, callback) {
   });
 };
 
-var rateLimitedPages = 5;
+var rateLimitedPages = 1;
 
 function searchAll(apiCall, query, pageToken, callback, resultsSoFar){
 
@@ -43,9 +62,18 @@ function searchAll(apiCall, query, pageToken, callback, resultsSoFar){
 }
 
 function paginatedSearch(query, callback){
+  console.log('Searching youtube...')
+
   var results = [];
-  searchAll(search, query, "", callback, results);
+  searchAll(searchVideos, query, "", callback, results);
 }
 
-module.exports.search = search;
+function paginatedSearchChannels(query, callback){
+  var results = [];
+  searchAll(searchChannels, "", "", callback, results);
+}
+
+module.exports.searchVideos = searchVideos;
 module.exports.paginatedSearch = paginatedSearch;
+
+module.exports.paginatedSearchChannels = paginatedSearchChannels;

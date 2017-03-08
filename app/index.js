@@ -31,7 +31,10 @@ app.get('/oauth', function (req, res) {
 app.get('/youtube', function(req, res){
   console.log('Getting youtube data ...');
 
-	var json = youtube.search("Some query term", "", function(json){
+  var query = req.query.q;
+  console.log("query:" + query);
+
+	var json = youtube.searchVideos(query, "", function(json){
     res.status(200).json(json);
   });
 });
@@ -39,8 +42,16 @@ app.get('/youtube', function(req, res){
 app.get('/youtubeAll', function(req, res){
   console.log('Getting youtube data ...');
 
-  var query = req.query.queryTerm;
+  var query = req.query.q;
   console.log("query:" + query);
+
+  var json = youtube.paginatedSearch(query, function(json){
+    res.status(200).json(json);
+  });
+});
+
+app.get('/searchMyChannels', function(req, res){
+  console.log('Getting youtube data ...');
 
   var json = youtube.paginatedSearch(query, function(json){
     res.status(200).json(json);

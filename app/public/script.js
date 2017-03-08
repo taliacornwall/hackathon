@@ -35,6 +35,10 @@
             id: "description",
             alias: "Description",
             dataType: tableau.dataTypeEnum.string
+        },{
+            id: "liveBroadcastContent",
+            alias: "Live Broadcast Content",
+            dataType: tableau.dataTypeEnum.string
         }
         ];
 
@@ -47,13 +51,16 @@
         schemaCallback([tableSchema]);
     };
 
+
+
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-      var query = $('#queryInput').val();
+
+      var userInput = JSON.parse(tableau.connectionData);
 
       $.getJSON(
         "http://localhost:3000/youtubeAll",
-        {queryTerm: query}, 
+        {q: userInput.query}, 
         function(resp) {
 
           tableData = [];
@@ -62,7 +69,7 @@
           $.each(resp, function(index, page){
 
               var items = page.items;
-              var region = items.regionCode;
+              var region = page.regionCode;
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
@@ -73,7 +80,8 @@
                       "channelTitle": val.snippet.channelTitle,
                       "regionCode": region,
                       "title": val.snippet.title,
-                      "description": val.snippet.description
+                      "description": val.snippet.description,
+                      "liveBroadcastContent": val.snippet.liveBroadcastContent
                   });
               });
           });
@@ -93,9 +101,19 @@
 
     // Create event listeners for when the user submits the form
     $(document).ready(function() {
-        $("#submitButton").click(function() {
-            tableau.connectionName = "Youtube"; // This will be the data source name in Tableau
-            tableau.submit(); // This sends the connector object to Tableau
-        });
+
+      // var query = $('#queryInput').val();
+      // var sort = $('.dropdown-menu').val();
+
+      $("#submitButton").click(function() {
+
+        var userInput = {
+          query: $('#queryInput').val().trim()
+        };
+
+        tableau.connectionData = JSON.stringify(userInput);
+        tableau.connectionName = "Youtube"; // This will be the data source name in Tableau
+        tableau.submit(); // This sends the connector object to Tableau
+      });
     });
 })();
