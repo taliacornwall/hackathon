@@ -27,7 +27,7 @@ var searchChannels = function(pageToken, callback) {
   });
 };
 
-var searchVideos = function(query, pageToken, callback) {
+function searchVideos (query, pageToken, callback) {
 
   youtube.search.list({
     part: 'id,snippet',
@@ -47,14 +47,14 @@ var searchVideos = function(query, pageToken, callback) {
   });
 };
 
-var rateLimitedPages = 1;
+var rateLimitedPages = 2;
 
 function searchAll(apiCall, query, pageToken, callback, resultsSoFar){
 
   apiCall(query, pageToken, function(response){
     resultsSoFar.push(response);
     if (response.nextPageToken && resultsSoFar.length < rateLimitedPages){
-      searchAll(query, response.nextPageToken, callback, resultsSoFar);
+      searchAll(apiCall, query, response.nextPageToken, callback, resultsSoFar);
     } else {
       callback(resultsSoFar);
     }

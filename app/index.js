@@ -3,8 +3,30 @@ var app = express();
 var google = require('./oauth2');
 var youtube = require('./youtube');
 var path = require('path');
+var session = require('express-session')
 
 app.use(express.static(path.join(__dirname, '/public')));
+
+app.use(session({
+  secret: 'this is so secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
+}))
+
+function checkAuth (req, res, next) {
+  var token = req.session.token;
+  if (!token) {
+    var url = google.getAuthorizationUrl();
+    res.redirect(url);
+  } else {
+    google.setTokens(token, function () {
+      next()
+    });
+  }
+}
+
+app.use(['/postAuth', '/youtube', '/youtubeAll'], checkAuth)
 
 app.get('/', function (req, res) {
   res.sendFile('index.html');
@@ -14,17 +36,13 @@ app.get('/postAuth', function (req, res) {
   res.sendFile('public/postAuth.html', { root: __dirname });
 });
 
-app.get('/oauth', function (req, res) {
-
+app.get('/oauth',function (req, res) {
   var code = req.query.code;
-
   if (code) {
-  	google.setTokens(code, function () {
-      res.redirect('/postAuth');
-  	});
+    req.session.token = code;
+    res.redirect('/postAuth');
   } else {
-    var url = google.getAuthorizationUrl();
-    res.redirect(url);
+    res.redirect('/');
   }
 });
 

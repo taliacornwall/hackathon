@@ -95,7 +95,7 @@
     // Create event listeners for when the user submits the form
     $(document).ready(function() {
         $("#authButton").click(function() {
-            window.location.href = '/oauth';        
+            window.location.href = '/postAuth';        
         });
     });
 
