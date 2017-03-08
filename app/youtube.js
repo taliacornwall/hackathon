@@ -1,39 +1,25 @@
 var google = require('googleapis');
 var oauthClient = require('./oauth2');
 
+var rateLimitedPages = 2;
+
 // initialize the Youtube API library
 var youtube = google.youtube({
   version: 'v3',
   auth: oauthClient.client
 });
 
-var searchChannels = function(pageToken, callback) {
-  console.log('Searching youtube channels...')
+function _channelsList(params, callback) {
 
-  youtube.channels.list({
-    part: 'id,snippet',
-    pageToken: pageToken
-  }, function (err, data) {
+  var extendedParams = Object.assign({}, params, {
+    part: 'id,snippet'
+  })
 
-    var response;
-    if (err) {
-      response = {error: + err};
-      console.log(err);
-    }
-    if (data) {
-      response = data;
-    }
-    callback(response);
-  });
-};
+  console.log('Searching channels list with params' + JSON.stringify(extendedParams));
 
-function searchVideos (query, pageToken, callback) {
-
-  youtube.search.list({
-    part: 'id,snippet',
-    q: query,
-    pageToken: pageToken
-  }, function (err, data) {
+  youtube.channels.list(
+    extendedParams, 
+    function (err, data) {
 
     var response;
     if (err) {
@@ -47,33 +33,88 @@ function searchVideos (query, pageToken, callback) {
   });
 };
 
-var rateLimitedPages = 2;
+function _searchList (params, callback) {
 
-function searchAll(apiCall, query, pageToken, callback, resultsSoFar){
+  var extendedParams = Object.assign({}, params, {
+    part: 'id,snippet',
+  })
 
-  apiCall(query, pageToken, function(response){
+  console.log('Searching search list with params' + JSON.stringify(extendedParams));
+
+  youtube.search.list(
+    extendedParams,
+    function (err, data) {
+
+    var response;
+    if (err) {
+      response = {error: + err};
+      console.log(err);
+    }
+    if (data) {
+      response = data;
+    }
+    callback(response);
+  });
+};
+
+function _videosList (params, callback) {
+
+  var extendedParams = Object.assign({}, params, {
+    part: 'snippet, statistics',
+    chart: 'mostPopular'
+  })
+
+  console.log('Searching videos list with params' + JSON.stringify(extendedParams));
+
+  youtube.videos.list(
+    extendedParams,
+    function (err, data) {
+
+    var response;
+    if (err) {
+      response = {error: + err};
+      console.log(err);
+    }
+    if (data) {
+      response = data;
+    }
+    callback(response);
+  });
+};
+
+function _paginatedSearch(apiCall, params, callback, resultsSoFar){
+
+  if (!resultsSoFar){
+    resultsSoFar = [];
+  }
+
+  apiCall(params, function(response){
     resultsSoFar.push(response);
     if (response.nextPageToken && resultsSoFar.length < rateLimitedPages){
-      searchAll(apiCall, query, response.nextPageToken, callback, resultsSoFar);
+      params.pageToken = response.nextPageToken;
+      _paginatedSearch(apiCall, params, callback, resultsSoFar);
     } else {
       callback(resultsSoFar);
     }
   });
 }
 
-function paginatedSearch(query, callback){
+function searchList(params, callback){
   console.log('Searching youtube...')
-
-  var results = [];
-  searchAll(searchVideos, query, "", callback, results);
+  _paginatedSearch(_searchList, params, callback);
 }
 
-function paginatedSearchChannels(query, callback){
-  var results = [];
-  searchAll(searchChannels, "", "", callback, results);
+function videosList(params, callback){
+  console.log('Searching youtube for videos...')
+  _paginatedSearch(_videosList, params, callback);
 }
 
-module.exports.searchVideos = searchVideos;
-module.exports.paginatedSearch = paginatedSearch;
+// function paginatedSearchChannels(query, callback){
+//   var results = [];
+//   searchAll(searchChannels, "", "", callback, results);
+// }
 
-module.exports.paginatedSearchChannels = paginatedSearchChannels;
+// module.exports.searchVideos = searchVideos;
+module.exports.searchList = searchList;
+module.exports.videosList = videosList;
+// module.exports.paginatedSearchChannels = paginatedSearchChannels;

@@ -36,6 +36,17 @@ app.get('/postAuth', function (req, res) {
   res.sendFile('public/postAuth.html', { root: __dirname });
 });
 
+// app.get('/oauth', (req, res, next)=>{
+//   new Promise((resolve, reject) => {
+//     get((err)=>{
+//       if err reject(err);
+//       resolve();
+//     })
+//   }).then(foo)
+//   .then(bar)
+//   .catch(next);
+// })
+
 app.get('/oauth',function (req, res) {
   var code = req.query.code;
   if (code) {
@@ -46,35 +57,46 @@ app.get('/oauth',function (req, res) {
   }
 });
 
-app.get('/youtube', function(req, res){
+// app.get('/youtube', function(req, res){
+//   console.log('Getting youtube data ...');
+
+//   var query = req.query.q;
+//   console.log("query:" + query);
+
+// 	var json = youtube.searchVideos(query, "", function(json){
+//     res.status(200).json(json);
+//   });
+// });
+
+app.get('/searchList', function(req, res){
   console.log('Getting youtube data ...');
 
   var query = req.query.q;
   console.log("query:" + query);
 
-	var json = youtube.searchVideos(query, "", function(json){
+  var json = youtube.searchList({q: query}, function(json){
     res.status(200).json(json);
   });
 });
 
-app.get('/youtubeAll', function(req, res){
+app.get('/videosList', function(req, res){
   console.log('Getting youtube data ...');
 
   var query = req.query.q;
   console.log("query:" + query);
 
-  var json = youtube.paginatedSearch(query, function(json){
+  var json = youtube.videosList({}, function(json){
     res.status(200).json(json);
   });
 });
 
-app.get('/searchMyChannels', function(req, res){
-  console.log('Getting youtube data ...');
+// app.get('/searchMyChannels', function(req, res){
+//   console.log('Getting youtube data ...');
 
-  var json = youtube.paginatedSearch(query, function(json){
-    res.status(200).json(json);
-  });
-});
+//   var json = youtube.paginatedSearch(query, function(json){
+//     res.status(200).json(json);
+//   });
+// });
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
