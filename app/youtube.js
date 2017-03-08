@@ -7,7 +7,7 @@ var youtube = google.youtube({
   auth: oauthClient.client
 });
 
-function search(query, pageToken, callback) {
+var search = function(query, pageToken, callback) {
   console.log('Searching youtube...')
 
   youtube.search.list({
@@ -30,9 +30,9 @@ function search(query, pageToken, callback) {
 
 var rateLimitedPages = 5;
 
-function searchAll(query, pageToken, callback, resultsSoFar){
+function searchAll(apiCall, query, pageToken, callback, resultsSoFar){
 
-  search(query, pageToken, function(response){
+  apiCall(query, pageToken, function(response){
     resultsSoFar.push(response);
     if (response.nextPageToken && resultsSoFar.length < rateLimitedPages){
       searchAll(query, response.nextPageToken, callback, resultsSoFar);
@@ -44,7 +44,7 @@ function searchAll(query, pageToken, callback, resultsSoFar){
 
 function paginatedSearch(query, callback){
   var results = [];
-  searchAll(query, "", callback, results);
+  searchAll(search, query, "", callback, results);
 }
 
 module.exports.search = search;

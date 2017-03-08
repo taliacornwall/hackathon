@@ -24,8 +24,16 @@
             alias: "Channel Id",
             dataType: tableau.dataTypeEnum.string
         },{
-            id: "channelTitle",
-            alias: "Channel Title",
+            id: "regionCode",
+            alias: "Region",
+            dataType: tableau.dataTypeEnum.string
+        },{
+            id: "title",
+            alias: "Title",
+            dataType: tableau.dataTypeEnum.string
+        },{
+            id: "description",
+            alias: "Description",
             dataType: tableau.dataTypeEnum.string
         }
         ];
@@ -54,6 +62,7 @@
           $.each(resp, function(index, page){
 
               var items = page.items;
+              var region = items.regionCode;
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
@@ -62,6 +71,9 @@
                       "publishedAt": val.snippet.publishedAt,
                       "channelId": val.snippet.channelId,
                       "channelTitle": val.snippet.channelTitle,
+                      "regionCode": region,
+                      "title": val.snippet.title,
+                      "description": val.snippet.description
                   });
               });
           });
