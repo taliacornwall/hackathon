@@ -1,95 +1,19 @@
 // import videoCols from './helpers';
-(function () {
+
     // Create the connector object
     var myConnector = tableau.makeConnector();
     
     // Define the schema
     myConnector.getSchema = function(schemaCallback) {
-
-      // var videoCols = [{
-      //       id: "id",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "publishedAt",
-      //       alias: "Published",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "channelId",
-      //       alias: "Channel Id",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "regionCode",
-      //       alias: "Region",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "title",
-      //       alias: "Title",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "description",
-      //       alias: "Description",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "liveBroadcastContent",
-      //       alias: "Live Broadcast Content",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "viewCount",
-      //       alias: "View Count",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "likeCount",
-      //       alias: "Like Count",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "dislikeCount",
-      //       alias: "Dislike Count",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "favoriteCount",
-      //       alias: "Favorite Count",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "commentCount",
-      //       alias: "Comment Count",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "tags",
-      //       alias: "Tags",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "player",
-      //       alias: "Player",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "topicIds",
-      //       alias: "Topic Ids",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "topicCategories",
-      //       alias: "Topic Categories",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "duration",
-      //       alias: "Duration",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "dimension",
-      //       alias: "Dimension",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }, {
-      //       id: "definition",
-      //       alias: "Definition",
-      //       dataType: tableau.dataTypeEnum.string
-      //   }];
     
         var videosSchema = {
             id: "videos",
             alias: "Youtube videos",
             columns: [{
-              id: "id",
-              dataType: tableau.dataTypeEnum.string
-            }]
+                id: "id",
+                dataType: tableau.dataTypeEnum.string
+            }
+            ]
         };
 
         schemaCallback([videosSchema]);
@@ -98,7 +22,9 @@
     // Download the data
     myConnector.getData = function(table, doneCallback) {
 
-      // var userInput = JSON.parse(tableau.connectionData);
+      alert('hi');
+
+      var userInput = JSON.parse(tableau.connectionData);
 
       // $.getJSON(
       //   "http://localhost:3000/searchList",
@@ -189,17 +115,16 @@
   // Create event listeners for when the user submits the form
   $(document).ready(function() {
 
-    // var query = $('#queryInput').val();
+    var query = $('#queryInput').val();
 
     $("#submitButton").click(function() {
 
-      // var userInput = {
-      //   query: $('#queryInput').val().trim()
-      // };
+      var userInput = {
+        query: $('#queryInput').val().trim()
+      };
 
-      // tableau.connectionData = JSON.stringify(userInput);
+      tableau.connectionData = JSON.stringify(userInput);
       tableau.connectionName = "Youtubes"; // This will be the data source name in Tableau
       tableau.submit(); // This sends the connector object to Tableau
     });
   });
-})();

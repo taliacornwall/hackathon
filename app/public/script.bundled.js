@@ -73,44 +73,54 @@
 "use strict";
 
 
-(function () {
-    var myConnector = tableau.makeConnector();
+var myConnector = tableau.makeConnector();
 
-    myConnector.getSchema = function (schemaCallback) {
+myConnector.getSchema = function (schemaCallback) {
 
-        var videosSchema = {
-            id: "videos",
-            alias: "Youtube videos",
-            columns: [{
-                id: "id",
-                dataType: tableau.dataTypeEnum.string
-            }]
+    var videosSchema = {
+        id: "videos",
+        alias: "Youtube videos",
+        columns: [{
+            id: "id",
+            dataType: tableau.dataTypeEnum.string
+        }]
+    };
+
+    schemaCallback([videosSchema]);
+};
+
+myConnector.getData = function (table, doneCallback) {
+
+    alert('hi');
+
+    var userInput = JSON.parse(tableau.connectionData);
+
+    doneCallback();
+};
+
+tableau.registerConnector(myConnector);
+
+$(document).ready(function () {
+    $("#authButton").click(function () {
+        window.location.href = '/postAuth';
+    });
+});
+
+$(document).ready(function () {
+
+    var query = $('#queryInput').val();
+
+    $("#submitButton").click(function () {
+
+        var userInput = {
+            query: $('#queryInput').val().trim()
         };
 
-        schemaCallback([videosSchema]);
-    };
-
-    myConnector.getData = function (table, doneCallback) {
-
-        doneCallback();
-    };
-
-    tableau.registerConnector(myConnector);
-
-    $(document).ready(function () {
-        $("#authButton").click(function () {
-            window.location.href = '/postAuth';
-        });
+        tableau.connectionData = JSON.stringify(userInput);
+        tableau.connectionName = "Youtubes";
+        tableau.submit();
     });
-
-    $(document).ready(function () {
-
-        $("#submitButton").click(function () {
-            tableau.connectionName = "Youtubes";
-            tableau.submit();
-        });
-    });
-})();
+});
 
 /***/ })
 /******/ ]);

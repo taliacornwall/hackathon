@@ -26,7 +26,7 @@ function checkAuth (req, res, next) {
   }
 }
 
-app.use(['/postAuth', '/searchList', '/videosList'], checkAuth);
+// app.use(['/postAuth'], checkAuth);
 
 app.get('/', function (req, res) {
   res.sendFile('index.html');
