@@ -82,10 +82,10 @@ app.get('/searchList', function(req, res){
 app.get('/videosList', function(req, res){
   console.log('Getting youtube data ...');
 
-  var query = req.query.q;
-  console.log("query:" + query);
+  var videoId = req.query.id;
+  console.log("video id:" + query);
 
-  var json = youtube.videosList({}, function(json){
+  var json = youtube.videosList({id: videoId}, function(json){
     res.status(200).json(json);
   });
 });

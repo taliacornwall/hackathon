@@ -83,14 +83,13 @@
         schemaCallback([videosSchema, statisticsSchema]);
     };
 
-    var storedVideoResult;
+    var storedVideoResult = [];
+    var numberOfVideos = 0;
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
 
-      if (storedVideoResult){
-        parseResponse(table, storedVideoResult, doneCallback);
-      } else {
+      if (table.tableInfo.id === "videos"){
         var userInput = JSON.parse(tableau.connectionData);
         $.getJSON(
           "http://localhost:3000/searchList",
@@ -98,8 +97,22 @@
           function(resp) {
             // cache data so we don't have to call twice
             storedVideoResult = resp;
-            parseResponse(table, storedVideoResult, doneCallback);
+            parseVideos(table, storedVideoResult, doneCallback);
         });
+      } else {
+        // $.each(response, function(index, page){
+        //   $.each(page.items, function(index, val){
+        //     var id = val.id.videoId;
+        //     $.getJSON(
+        //       "http://localhost:3000/searchVideos",
+        //       {id: id},
+        //       function(resp) {
+        //         parseVideos(table, resp);
+        //     });
+        //   });
+        // });
+
+        doneCallback();
       }
   };
 

@@ -60,7 +60,7 @@ function _searchList (params, callback) {
 function _videosList (params, callback) {
 
   var extendedParams = Object.assign({}, params, {
-    part: 'snippet, statistics',
+    part: 'id, statistics, topicDetails, contentDetails,player',
     chart: 'mostPopular'
   })
 
