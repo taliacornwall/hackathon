@@ -1,12 +1,13 @@
 var google = require('googleapis');
 var oauthClient = require('./oauth2');
 
-var rateLimitedPages = 2;
+// limiting to avoid exceeding google quota
+var RATE_LIMITED_PAGES = 2;
 
 // initialize the Youtube API library
 var youtube = google.youtube({
   version: 'v3',
-  auth: oauthClient.key
+  auth: oauthClient.client
 });
 
 function _channelsList(params, callback) {
@@ -81,6 +82,7 @@ function _videosList (params, callback) {
   });
 };
 
+// performs paginated search for any API call
 function _paginatedSearch(apiCall, params, callback, resultsSoFar){
 
   if (!resultsSoFar){
@@ -89,7 +91,7 @@ function _paginatedSearch(apiCall, params, callback, resultsSoFar){
 
   apiCall(params, function(response){
     resultsSoFar.push(response);
-    if (response.nextPageToken && resultsSoFar.length < rateLimitedPages){
+    if (response.nextPageToken && resultsSoFar.length < RATE_LIMITED_PAGES){
       params.pageToken = response.nextPageToken;
       _paginatedSearch(apiCall, params, callback, resultsSoFar);
     } else {
@@ -108,12 +110,5 @@ function videosList(params, callback){
   _paginatedSearch(_videosList, params, callback);
 }
 
-// function paginatedSearchChannels(query, callback){
-//   var results = [];
-//   searchAll(searchChannels, "", "", callback, results);
-// }
-
-// module.exports.searchVideos = searchVideos;
 module.exports.searchList = searchList;
 module.exports.videosList = videosList;
-// module.exports.paginatedSearchChannels = paginatedSearchChannels;

@@ -20,15 +20,13 @@ function checkAuth (req, res, next) {
     var url = google.getAuthorizationUrl();
     res.redirect(url);
   } else {
-    console.log(token);
-    next();
-    // google.setTokens(token, function () {
-    //   next()
-    // });
+    google.setTokens(token, function () {
+      next()
+    });
   }
 }
 
-app.use(['/postAuth', '/youtube', '/youtubeAll'], checkAuth)
+app.use(['/postAuth', '/searchList', '/videosList'], checkAuth)
 
 app.get('/', function (req, res) {
   res.sendFile('index.html');
@@ -59,17 +57,6 @@ app.get('/oauth',function (req, res) {
   }
 });
 
-// app.get('/youtube', function(req, res){
-//   console.log('Getting youtube data ...');
-
-//   var query = req.query.q;
-//   console.log("query:" + query);
-
-// 	var json = youtube.searchVideos(query, "", function(json){
-//     res.status(200).json(json);
-//   });
-// });
-
 app.get('/searchList', function(req, res){
   console.log('Getting youtube data ...');
 
@@ -91,14 +78,6 @@ app.get('/videosList', function(req, res){
     res.status(200).json(json);
   });
 });
-
-// app.get('/searchMyChannels', function(req, res){
-//   console.log('Getting youtube data ...');
-
-//   var json = youtube.paginatedSearch(query, function(json){
-//     res.status(200).json(json);
-//   });
-// });
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')

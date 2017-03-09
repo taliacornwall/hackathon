@@ -1,14 +1,7 @@
 (function() {
 
-    var key = "0a48d8aba6c849aebd55b35a98f7bfeb";
-    var articleKey = '0a48d8aba6c849aebd55b35a98f7bfeb';
-
     // Create the connector object
     var myConnector = tableau.makeConnector();
-
-    // myConnector.init = function(initCallback) {
-    //     tableau.authType = tableau.authTypeEnum.none;   
-    // }
     
     // Define the schema
     myConnector.getSchema = function(schemaCallback) {
@@ -96,38 +89,6 @@
             columns: videoCols
         };
 
-       //  var statisticsCols = [{
-       //      id: "id",
-       //      dataType: tableau.dataTypeEnum.string
-       //  },{
-       //      id: "viewCount",
-       //      alias: "View Count",
-       //      dataType: tableau.dataTypeEnum.string            
-       //  },{
-       //      id: "likeCount",
-       //      alias: "Like Count",
-       //      dataType: tableau.dataTypeEnum.string
-       //  },{
-       //      id: "dislikeCount",
-       //      alias: "Dislike Count",
-       //      dataType: tableau.dataTypeEnum.string
-       //  },{
-       //      id: "favoriteCount",
-       //      alias: "Favorite Count",
-       //      dataType: tableau.dataTypeEnum.string
-       //  },{
-       //      id: "commentCount",
-       //      alias: "Comment Count",
-       //      dataType: tableau.dataTypeEnum.string
-       //  }
-       //  ];
-
-       // var statisticsSchema = {
-       //      id: "statistics",
-       //      alias: "Youtube videos statistiscs",
-       //      columns: statisticsCols
-       //  };
-
         schemaCallback([videosSchema]);
     };
 
@@ -135,13 +96,14 @@
     myConnector.getData = function(table, doneCallback) {
 
       var userInput = JSON.parse(tableau.connectionData);
+
       $.getJSON(
         "http://localhost:3000/searchList",
         {q: userInput.query}, 
         function(resp) {
           
           tableData = [];
-          // var promises = [];
+          var promises = [];
 
           // Iterate over the pages
           $.each(resp, function(index, page){
@@ -151,23 +113,18 @@
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
-                // promises.push(getVideoDetails(tableData, val.id.videoId));
-                tableData.push({
-                  id: val.id,
-                  channelId: 1
-                })
+                // NOT WORKING
+                promises.push(getVideoDetails(tableData, val.id.videoId));
               });
-
-              table.appendRows(tableData);
-              doneCallback();
           });
 
-          // Promise.all(promises).then(function(){
-          //     table.appendRows(tableData);
-          //     doneCallback();
-          // }).catch(function(e){
-          //   doneCallback();
-          // });
+          Promise.all(promises).then(function(){
+              // NOT WORKING
+              table.appendRows(tableData);
+              doneCallback();
+          }).catch(function(e){
+            doneCallback();
+          });
       });
   };
 
@@ -213,63 +170,6 @@
     }, tableData, id);
   }
 
-  function parseResponse(table, response, doneCallback){
-    if (table.tableInfo.id === "videos"){
-      parseVideos(table, response,doneCallback);
-    } else {
-      parseStatistics(table, response, doneCallback);
-    }
-  }
-
-  function parseVideos(table, response, doneCallback){
-
-    tableData = [];
-
-    // Iterate over the pages
-    $.each(response, function(index, page){
-
-        var items = page.items;
-        var region = page.regionCode;
-
-        // Iterate over the JSON object
-        $.each(items, function(index, val){
-            tableData.push({
-                "id": val.id.videoId,
-                "publishedAt": val.snippet.publishedAt,
-                "channelId": val.snippet.channelId,
-                "channelTitle": val.snippet.channelTitle,
-                "regionCode": region,
-                "title": val.snippet.title,
-                "description": val.snippet.description,
-                "liveBroadcastContent": val.snippet.liveBroadcastContent
-            });
-        });
-    });
-
-    table.appendRows(tableData);
-    doneCallback();
-  }
-
-  function parseStatistics(table, response, doneCallback){
-    tableData = [];
-
-    $.each(response, function(index, page){
-        $.each(page.items, function(index, val){
-            tableData.push({
-                "id": val.id.videoId,
-                "viewCount": val.statistics.viewCount,
-                "likeCount": val.statistics.likeCount,
-                "dislikeCount": val.statistics.dislikeCount,
-                "favoriteCount": val.statistics.favoriteCount,
-                "commentCount": val.statistics.commentCount,
-            });
-        });
-    });
-
-    table.appendRows(tableData);
-    doneCallback();
-  }
-
   tableau.registerConnector(myConnector);
 
   // Create event listeners for when the user submits the form
@@ -282,8 +182,7 @@
   // Create event listeners for when the user submits the form
   $(document).ready(function() {
 
-    // var query = $('#queryInput').val();
-    // var sort = $('.dropdown-menu').val();
+    var query = $('#queryInput').val();
 
     $("#submitButton").click(function() {
 
@@ -292,7 +191,7 @@
       };
 
       tableau.connectionData = JSON.stringify(userInput);
-      tableau.connectionName = "Youtube"; // This will be the data source name in Tableau
+      tableau.connectionName = "Youtubes"; // This will be the data source name in Tableau
       tableau.submit(); // This sends the connector object to Tableau
     });
   });
