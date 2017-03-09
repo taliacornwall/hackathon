@@ -1,8 +1,8 @@
 module.exports = {
-  entry: './app/public/script.js',
+  entry: ["babel-polyfill", "./app/public/script.js"],
   output: {
   	path: './app/public',
-  	filename: 'script.bundled.js'
+  	filename: '[name].bundled.js'
   },
 	module: {
 	  loaders: [

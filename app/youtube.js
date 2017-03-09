@@ -7,7 +7,7 @@ var RATE_LIMITED_PAGES = 2;
 // initialize the Youtube API library
 var youtube = google.youtube({
   version: 'v3',
-  auth: oauthClient.client
+  auth: oauthClient.key
 });
 
 function _channelsList(params, callback) {

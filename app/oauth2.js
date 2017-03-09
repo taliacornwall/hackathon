@@ -20,6 +20,8 @@ var OAuth2Client = google.auth.OAuth2;
 
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
+
+// TODO: shouldn't be public on github
 var CLIENT_ID = '340113640761-1l78ovnpcbn4nv54u3rf5qj5n95po5rl.apps.googleusercontent.com';
 var CLIENT_SECRET = 'GH-RQ3PWpjJZqiRVjqEEeu0N';
 var REDIRECT_URL = 'http://localhost:3000/oauth';
@@ -62,3 +64,4 @@ function setTokens(code, callback){
 module.exports.setTokens = setTokens;
 module.exports.getAuthorizationUrl = getAuthorizationUrl;
 module.exports.client = client;
+module.exports.key = API_KEY;

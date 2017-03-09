@@ -14,17 +14,17 @@ app.use(session({
   cookie: {}
 }));
 
-function checkAuth (req, res, next) {
-  var token = req.session.token;
-  if (!token) {
-    var url = google.getAuthorizationUrl();
-    res.redirect(url);
-  } else {
-    google.setTokens(token, function () {
-      next()
-    });
-  }
-}
+// function checkAuth (req, res, next) {
+//   var token = req.session.token;
+//   if (!token) {
+//     var url = google.getAuthorizationUrl();
+//     res.redirect(url);
+//   } else {
+//     // google.setTokens(token, function () {
+//       next()
+//     // });
+//   }
+// }
 
 // app.use(['/postAuth'], checkAuth);
 
