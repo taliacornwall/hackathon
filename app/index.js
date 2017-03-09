@@ -12,7 +12,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {}
-}))
+}));
 
 function checkAuth (req, res, next) {
   var token = req.session.token;
@@ -26,7 +26,7 @@ function checkAuth (req, res, next) {
   }
 }
 
-app.use(['/postAuth', '/searchList', '/videosList'], checkAuth)
+app.use(['/postAuth', '/searchList', '/videosList'], checkAuth);
 
 app.get('/', function (req, res) {
   res.sendFile('index.html');

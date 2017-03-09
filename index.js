@@ -1,2 +1,1 @@
-require('./app/index')  
-require('./app/oauth2')  
+require('./app/index')
