@@ -36,7 +36,7 @@ function _channelsList(params, callback) {
 function _searchList (params, callback) {
 
   var extendedParams = Object.assign({}, params, {
-    part: 'id,snippet',
+    part: 'id',
   })
 
   console.log('Searching search list with params' + JSON.stringify(extendedParams));
@@ -60,7 +60,7 @@ function _searchList (params, callback) {
 function _videosList (params, callback) {
 
   var extendedParams = Object.assign({}, params, {
-    part: 'id, statistics, topicDetails, contentDetails,player'
+    part: 'id, snippet, statistics, contentDetails,player'
   })
 
   console.log('Searching videos list with params' + JSON.stringify(extendedParams));
