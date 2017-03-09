@@ -39,6 +39,26 @@
             id: "liveBroadcastContent",
             alias: "Live Broadcast Content",
             dataType: tableau.dataTypeEnum.string
+        },{
+            id: "viewCount",
+            alias: "View Count",
+            dataType: tableau.dataTypeEnum.string            
+        },
+        id: "likeCount",
+            alias: "Like Count",
+            dataType: tableau.dataTypeEnum.string
+        },{
+            id: "dislikeCount",
+            alias: "Dislike Count",
+            dataType: tableau.dataTypeEnum.string
+        },{
+            id: "favoriteCount",
+            alias: "Favorite Count",
+            dataType: tableau.dataTypeEnum.string
+        },{
+            id: "commentCount",
+            alias: "Comment Count",
+            dataType: tableau.dataTypeEnum.string
         }
         ];
 
@@ -103,17 +123,18 @@
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
-                  tableData.push({
-                      "id": val.id.videoId,
-                      "publishedAt": val.snippet.publishedAt,
-                      "channelId": val.snippet.channelId,
-                      "channelTitle": val.snippet.channelTitle,
-                      "regionCode": region,
-                      "title": val.snippet.title,
-                      "description": val.snippet.description,
-                      "liveBroadcastContent": val.snippet.liveBroadcastContent
-                  });
-                  promises.push(getVideoDetails(val.id.videoId));
+
+                var video = {
+                    "id": val.id.videoId,
+                    "publishedAt": val.snippet.publishedAt,
+                    "channelId": val.snippet.channelId,
+                    "channelTitle": val.snippet.channelTitle,
+                    "regionCode": region,
+                    "title": val.snippet.title,
+                    "description": val.snippet.description,
+                    "liveBroadcastContent": val.snippet.liveBroadcastContent
+                };
+                promises.push(getVideoDetails(tableData, video));
               });
           });
 
@@ -126,29 +147,17 @@
       });
   };
 
-  function getVideoDetails(id) {
+  function getVideoDetails(tableData, video) {
     return new Promise(function(resolve, reject) {
       $.getJSON(
         "http://localhost:3000/videosList",
-        {id: id}, 
+        {id: video.id}, 
         function(resp) {
-          // tableData.push({
-          //   "id": val.id.videoId,
-          //   "viewCount": val.statistics.viewCount,
-          //   "likeCount": val.statistics.likeCount,
-          //   "dislikeCount": val.statistics.dislikeCount,
-          //   "favoriteCount": val.statistics.favoriteCount,
-          //   "commentCount": val.statistics.commentCount,
-          // });
+          var extendedVideo = $.extend({}, video, {"viewCount": 1});
+          tableData.push(extendedVideo);
           resolve();
         }); 
-
-      // reject();
-        // someAsyncOperation(function(err, result) {
-        //     if (err) return reject(err);
-        //     resolve(result);
-        // });
-    }, id);
+    }, tableData, video);
   }
 
   function parseResponse(table, response, doneCallback){
