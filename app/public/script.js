@@ -48,73 +48,108 @@
             columns: videoCols
         };
 
-        var statisticsCols = [{
-            id: "id",
-            dataType: tableau.dataTypeEnum.string
-        },{
-            id: "viewCount",
-            alias: "View Count",
-            dataType: tableau.dataTypeEnum.string            
-        },{
-            id: "likeCount",
-            alias: "Like Count",
-            dataType: tableau.dataTypeEnum.string
-        },{
-            id: "dislikeCount",
-            alias: "Dislike Count",
-            dataType: tableau.dataTypeEnum.string
-        },{
-            id: "favoriteCount",
-            alias: "Favorite Count",
-            dataType: tableau.dataTypeEnum.string
-        },{
-            id: "commentCount",
-            alias: "Comment Count",
-            dataType: tableau.dataTypeEnum.string
-        }
-        ];
+       //  var statisticsCols = [{
+       //      id: "id",
+       //      dataType: tableau.dataTypeEnum.string
+       //  },{
+       //      id: "viewCount",
+       //      alias: "View Count",
+       //      dataType: tableau.dataTypeEnum.string            
+       //  },{
+       //      id: "likeCount",
+       //      alias: "Like Count",
+       //      dataType: tableau.dataTypeEnum.string
+       //  },{
+       //      id: "dislikeCount",
+       //      alias: "Dislike Count",
+       //      dataType: tableau.dataTypeEnum.string
+       //  },{
+       //      id: "favoriteCount",
+       //      alias: "Favorite Count",
+       //      dataType: tableau.dataTypeEnum.string
+       //  },{
+       //      id: "commentCount",
+       //      alias: "Comment Count",
+       //      dataType: tableau.dataTypeEnum.string
+       //  }
+       //  ];
 
-       var statisticsSchema = {
-            id: "statistics",
-            alias: "Youtube videos statistiscs",
-            columns: statisticsCols
-        };
+       // var statisticsSchema = {
+       //      id: "statistics",
+       //      alias: "Youtube videos statistiscs",
+       //      columns: statisticsCols
+       //  };
 
-        schemaCallback([videosSchema, statisticsSchema]);
+        schemaCallback([videosSchema]);
     };
-
-    var storedVideoResult = [];
-    var numberOfVideos = 0;
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
 
-      if (table.tableInfo.id === "videos"){
-        var userInput = JSON.parse(tableau.connectionData);
-        $.getJSON(
-          "http://localhost:3000/searchList",
-          {q: userInput.query}, 
-          function(resp) {
-            // cache data so we don't have to call twice
-            storedVideoResult = resp;
-            parseVideos(table, storedVideoResult, doneCallback);
-        });
-      } else {
-        // $.each(response, function(index, page){
-        //   $.each(page.items, function(index, val){
-        //     var id = val.id.videoId;
-        //     $.getJSON(
-        //       "http://localhost:3000/searchVideos",
-        //       {id: id},
-        //       function(resp) {
-        //         parseVideos(table, resp);
-        //     });
-        //   });
-        // });
+      var userInput = JSON.parse(tableau.connectionData);
+      $.getJSON(
+        "http://localhost:3000/searchList",
+        {q: userInput.query}, 
+        function(resp) {
+          
+          tableData = [];
+          var promises = [];
 
-        doneCallback();
-      }
+          // Iterate over the pages
+          $.each(resp, function(index, page){
+
+              var items = page.items;
+              var region = page.regionCode;
+
+              // Iterate over the JSON object
+              $.each(items, function(index, val){
+                  tableData.push({
+                      "id": val.id.videoId,
+                      "publishedAt": val.snippet.publishedAt,
+                      "channelId": val.snippet.channelId,
+                      "channelTitle": val.snippet.channelTitle,
+                      "regionCode": region,
+                      "title": val.snippet.title,
+                      "description": val.snippet.description,
+                      "liveBroadcastContent": val.snippet.liveBroadcastContent
+                  });
+                  promises.push(getVideoDetails(val.id.videoId));
+              });
+          });
+
+          Promise.all(promises).then(function(){
+              table.appendRows(tableData);
+              doneCallback();
+          }).catch(function(e){
+            doneCallback();
+          });
+      });
   };
+
+  function getVideoDetails(id) {
+    return new Promise(function(resolve, reject) {
+      $.getJSON(
+        "http://localhost:3000/videosList",
+        {id: id}, 
+        function(resp) {
+          // tableData.push({
+          //   "id": val.id.videoId,
+          //   "viewCount": val.statistics.viewCount,
+          //   "likeCount": val.statistics.likeCount,
+          //   "dislikeCount": val.statistics.dislikeCount,
+          //   "favoriteCount": val.statistics.favoriteCount,
+          //   "commentCount": val.statistics.commentCount,
+          // });
+          resolve();
+        }); 
+
+      // reject();
+        // someAsyncOperation(function(err, result) {
+        //     if (err) return reject(err);
+        //     resolve(result);
+        // });
+    });
+  }
 
   function parseResponse(table, response, doneCallback){
     if (table.tableInfo.id === "videos"){

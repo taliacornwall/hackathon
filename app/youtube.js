@@ -1,7 +1,7 @@
 var google = require('googleapis');
 var oauthClient = require('./oauth2');
 
-var rateLimitedPages = 2;
+var rateLimitedPages = 1;
 
 // initialize the Youtube API library
 var youtube = google.youtube({
