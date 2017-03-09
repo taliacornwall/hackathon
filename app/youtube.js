@@ -1,12 +1,12 @@
 var google = require('googleapis');
 var oauthClient = require('./oauth2');
 
-var rateLimitedPages = 1;
+var rateLimitedPages = 2;
 
 // initialize the Youtube API library
 var youtube = google.youtube({
   version: 'v3',
-  auth: oauthClient.client
+  auth: oauthClient.key
 });
 
 function _channelsList(params, callback) {

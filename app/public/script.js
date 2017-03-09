@@ -141,7 +141,7 @@
         function(resp) {
           
           tableData = [];
-          var promises = [];
+          // var promises = [];
 
           // Iterate over the pages
           $.each(resp, function(index, page){
@@ -151,16 +151,23 @@
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
-                promises.push(getVideoDetails(tableData, val.id.videoId));
+                // promises.push(getVideoDetails(tableData, val.id.videoId));
+                tableData.push({
+                  id: val.id,
+                  channelId: 1
+                })
               });
-          });
 
-          Promise.all(promises).then(function(){
               table.appendRows(tableData);
               doneCallback();
-          }).catch(function(e){
-            doneCallback();
           });
+
+          // Promise.all(promises).then(function(){
+          //     table.appendRows(tableData);
+          //     doneCallback();
+          // }).catch(function(e){
+          //   doneCallback();
+          // });
       });
   };
 
@@ -172,25 +179,33 @@
         function(resp) {
           if (resp.length > 0 && resp[0].items && resp[0].items.length > 0){
             var val = resp[0].items[0];
-            var video = {
-                "id": val.id.videoId,
-                "publishedAt": val.snippet.publishedAt,
-                "channelId": val.snippet.channelId,
-                "channelTitle": val.snippet.channelTitle,
-                "title": val.snippet.title,
-                "description": val.snippet.description,
-                "liveBroadcastContent": val.snippet.liveBroadcastContent,
-                "viewCount": val.statistics.viewCount,
-                "likeCount": val.statistics.likeCount,
-                "dislikeCount": val.statistics.dislikeCount,
-                "favoriteCount": val.statistics.favoriteCount,
-                "commentCount": val.statistics.commentCount,
-                "tags": val.snippet.tags,
-                "player": val.player.embedHtml,
-                "duration": val.contentDetails.duration,
-                "dimension": val.contentDetails.dimension,
-                "definition": val.contentDetails.definition
-            };
+            var video = {}
+            video.id = id;
+            if (val.snippet){
+                video.publishedAt = val.snippet.publishedAt;
+                video.channelId = val.snippet.channelId;
+                video.channelTitle = val.snippet.channelTitle;
+                video.title = val.snippet.title;
+                video.description = val.snippet.description;
+                video.liveBroadcastContent = val.snippet.liveBroadcastContent;
+                video.tags = val.snippet.tags;
+            }
+            if (val.statistics){
+                video.viewCount = val.statistics.viewCount;
+                video.likeCount = val.statistics.likeCount;
+                video.dislikeCount = val.statistics.dislikeCount;
+                video.favoriteCount = val.statistics.favoriteCount;
+                video.commentCount = val.statistics.commentCount;
+            }
+            if (val.contentDetails){
+              video.duration = val.contentDetails.duration;
+              video.dimension = val.contentDetails.dimension;
+              video.definition = val.contentDetails.definition;
+            }
+            if (val.player){
+              video.player = val.player.embedHtml;
+            }
+
             tableData.push(video);
           }
           resolve();

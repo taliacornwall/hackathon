@@ -62,3 +62,4 @@ function setTokens(code, callback){
 module.exports.setTokens = setTokens;
 module.exports.getAuthorizationUrl = getAuthorizationUrl;
 module.exports.client = client;
+module.exports.key = API_KEY;

@@ -20,9 +20,11 @@ function checkAuth (req, res, next) {
     var url = google.getAuthorizationUrl();
     res.redirect(url);
   } else {
-    google.setTokens(token, function () {
-      next()
-    });
+    console.log(token);
+    next();
+    // google.setTokens(token, function () {
+    //   next()
+    // });
   }
 }
 
