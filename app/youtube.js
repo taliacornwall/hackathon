@@ -60,8 +60,7 @@ function _searchList (params, callback) {
 function _videosList (params, callback) {
 
   var extendedParams = Object.assign({}, params, {
-    part: 'id, statistics, topicDetails, contentDetails,player',
-    chart: 'mostPopular'
+    part: 'id, statistics, topicDetails, contentDetails,player'
   })
 
   console.log('Searching videos list with params' + JSON.stringify(extendedParams));

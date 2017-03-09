@@ -83,7 +83,7 @@ app.get('/videosList', function(req, res){
   console.log('Getting youtube data ...');
 
   var videoId = req.query.id;
-  console.log("video id:" + query);
+  console.log("video id:" + videoId);
 
   var json = youtube.videosList({id: videoId}, function(json){
     res.status(200).json(json);

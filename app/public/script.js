@@ -148,7 +148,7 @@
         //     if (err) return reject(err);
         //     resolve(result);
         // });
-    });
+    }, id);
   }
 
   function parseResponse(table, response, doneCallback){
