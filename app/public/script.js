@@ -19,13 +19,12 @@ import videoCols from './helpers';
     myConnector.getData = function(table, doneCallback) {
 
       var userInput = JSON.parse(tableau.connectionData);
-      var region = userInput.region === "All" ? null : userInput.region;
 
       $.getJSON(
         "http://localhost:3000/searchList",
         {q: userInput.query,
-        pages: userInput.pageLimit,
-        region: region}, 
+        pageLimit: userInput.pageLimit,
+        region: userInput.region}, 
         function(resp) {
           
           var tableData = [];

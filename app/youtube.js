@@ -2,7 +2,7 @@ var google = require('googleapis');
 var oauthClient = require('./oauth2');
 
 // limiting to avoid exceeding google quota
-var RATE_LIMITED_PAGES = 5;
+var RATE_LIMITED_PAGES = 200000;
 
 // initialize the Youtube API library
 var youtube = google.youtube({
@@ -92,8 +92,8 @@ function _paginatedSearch(apiCall, params, callback, resultsSoFar){
   apiCall(params, function(response){
     resultsSoFar.push(response);
     if (response.nextPageToken && 
-      resultsSoFar.length < RATE_LIMITED_PAGES && 
-      resultsSoFar.length < parseInt(params.pageLimit)){
+    resultsSoFar.length < RATE_LIMITED_PAGES && 
+    resultsSoFar.length < parseInt(params.pageLimit)){
       params.pageToken = response.nextPageToken;
       _paginatedSearch(apiCall, params, callback, resultsSoFar);
     } else {

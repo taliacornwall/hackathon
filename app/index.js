@@ -14,38 +14,9 @@ app.use(session({
   cookie: {}
 }));
 
-// function checkAuth (req, res, next) {
-//   var token = req.session.token;
-//   if (!token) {
-//     var url = google.getAuthorizationUrl();
-//     res.redirect(url);
-//   } else {
-//     // google.setTokens(token, function () {
-//       next()
-//     // });
-//   }
-// }
-
-// app.use(['/postAuth'], checkAuth);
-
 app.get('/', function (req, res) {
   res.sendFile('index.html');
 });
-
-// app.get('/postAuth', function (req, res) {
-//   res.sendFile('public/postAuth.html', { root: __dirname });
-// });
-
-// app.get('/oauth', (req, res, next)=>{
-//   new Promise((resolve, reject) => {
-//     get((err)=>{
-//       if err reject(err);
-//       resolve();
-//     })
-//   }).then(foo)
-//   .then(bar)
-//   .catch(next);
-// })
 
 app.get('/oauth',function (req, res) {
   var code = req.query.code;
@@ -66,6 +37,10 @@ app.get('/searchList', function(req, res){
   var params = {};
   params.q = query;
   params.pageLimit = req.query.pageLimit;
+
+  console.log(JSON.stringify(params));
+  console.log(JSON.stringify(req.query));
+
   if (req.query.region && req.query.region !== "All"){
     params.regionCode = req.query.region;
   }
