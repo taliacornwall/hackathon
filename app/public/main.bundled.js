@@ -3350,15 +3350,14 @@ myConnector.getData = function (table, doneCallback) {
       var region = page.regionCode;
 
       $.each(items, function (index, val) {
-        promises.push(getVideoDetails(tableData, val.id.videoId));
+        tableau.log("My console message goes here!");
+        if (val.id.videoId) {
+          promises.push(getVideoDetails(table, tableData, val.id.videoId));
+        }
       });
     });
 
     Promise.all(promises).then(function () {
-      console.log("here");
-      debugger;
-      alert(tableData);
-      alert(table.tableInfo);
       table.appendRows(tableData);
       doneCallback();
     }).catch(function (e) {
@@ -3367,7 +3366,7 @@ myConnector.getData = function (table, doneCallback) {
   });
 };
 
-function getVideoDetails(tableData, id) {
+function getVideoDetails(table, tableData, id) {
   return new Promise(function (resolve, reject) {
     $.getJSON("http://localhost:3000/videosList", { id: id }, function (resp) {
       if (resp.length > 0 && resp[0].items && resp[0].items.length > 0) {
@@ -3398,12 +3397,11 @@ function getVideoDetails(tableData, id) {
         if (val.player) {
           video.player = val.player.embedHtml;
         }
-
         tableData.push(video);
       }
       resolve();
     });
-  }, tableData, id);
+  }, table, tableData, id);
 }
 
 tableau.registerConnector(myConnector);

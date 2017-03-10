@@ -194,13 +194,28 @@ myConnector.getData = function (table, doneCallback) {
       var region = page.regionCode;
 
       $.each(items, function (index, val) {
-        promises.push(getVideoDetails(tableData, val.id.videoId));
+        if (val.id.videoId){
+          promises.push(getVideoDetails(tableData, val.id.videoId));
+        }
+        tableData.push({
+          id: 5
+        });
       });
     });
 
     Promise.all(promises).then(function () {
+        tableData.push({
+          id: 9
+        });
+
+     table.appendRows(tableData);
+
       doneCallback();
     }).catch(function (e) {
+        tableData.push({
+          id: 7
+        });
+
       doneCallback();
     });
   });

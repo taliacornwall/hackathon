@@ -36,25 +36,23 @@ import videoCols from './helpers';
 
               // Iterate over the JSON object
               $.each(items, function(index, val){
-                promises.push(getVideoDetails(tableData, val.id.videoId));
+                tableau.log("My console message goes here!");
+                if (val.id.videoId){
+                  promises.push(getVideoDetails(table, tableData, val.id.videoId));
+                }
               });
           });
 
           Promise.all(promises).then(function(){
-              // NOT WORKING
-              console.log("here");
-              debugger;
-              alert(tableData);
-              alert(table.tableInfo);
-              table.appendRows(tableData);
-              doneCallback();
+            table.appendRows(tableData);
+            doneCallback();
           }).catch(function(e){
             doneCallback();
           });
       });
   };
 
-  function getVideoDetails(tableData, id) {
+  function getVideoDetails(table, tableData, id) {
     return new Promise(function(resolve, reject) {
       $.getJSON(
         "http://localhost:3000/videosList",
@@ -88,12 +86,11 @@ import videoCols from './helpers';
             if (val.player){
               video.player = val.player.embedHtml;
             }
-
             tableData.push(video);
           }
           resolve();
         }); 
-    }, tableData, id);
+    }, table, tableData, id);
   }
 
   tableau.registerConnector(myConnector);
