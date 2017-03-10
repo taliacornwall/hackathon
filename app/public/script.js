@@ -19,10 +19,13 @@ import videoCols from './helpers';
     myConnector.getData = function(table, doneCallback) {
 
       var userInput = JSON.parse(tableau.connectionData);
+      var region = userInput.region === "All" ? null : userInput.region;
 
       $.getJSON(
         "http://localhost:3000/searchList",
-        {q: userInput.query}, 
+        {q: userInput.query,
+        pages: userInput.pageLimit,
+        region: region}, 
         function(resp) {
           
           var tableData = [];
@@ -69,7 +72,7 @@ import videoCols from './helpers';
                 video.title = val.snippet.title;
                 video.description = val.snippet.description;
                 video.liveBroadcastContent = val.snippet.liveBroadcastContent;
-                video.tags = val.snippet.tags;
+                video.tags = JSON.stringify(val.snippet.tags);
             }
             if (val.statistics){
                 video.viewCount = val.statistics.viewCount;
@@ -85,6 +88,10 @@ import videoCols from './helpers';
             }
             if (val.player){
               video.player = val.player.embedHtml;
+            }
+            if (val.topicDetails){
+              video.topicIds = JSON.stringify(val.topicDetails.relevantTopicIds);
+              video.topicCategories = JSON.stringify(val.topicDetails.topicCategories);
             }
             tableData.push(video);
           }
@@ -105,12 +112,14 @@ import videoCols from './helpers';
   // Create event listeners for when the user submits the form
   $(document).ready(function() {
 
-    var query = $('#queryInput').val();
+    // var query = $('#queryInput').val();
 
     $("#submitButton").click(function() {
 
       var userInput = {
-        query: $('#queryInput').val().trim()
+        query: $('#queryInput').val().trim(),
+        pageLimit: $('#pageLimit').val().trim(),
+        region: $('.dropdown #selected').text()
       };
 
       tableau.connectionData = JSON.stringify(userInput);

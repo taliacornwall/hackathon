@@ -32,9 +32,9 @@ app.get('/', function (req, res) {
   res.sendFile('index.html');
 });
 
-app.get('/postAuth', function (req, res) {
-  res.sendFile('public/postAuth.html', { root: __dirname });
-});
+// app.get('/postAuth', function (req, res) {
+//   res.sendFile('public/postAuth.html', { root: __dirname });
+// });
 
 // app.get('/oauth', (req, res, next)=>{
 //   new Promise((resolve, reject) => {
@@ -63,7 +63,14 @@ app.get('/searchList', function(req, res){
   var query = req.query.q;
   console.log("query:" + query);
 
-  var json = youtube.searchList({q: query}, function(json){
+  var params = {};
+  params.q = query;
+  params.pageLimit = req.query.pageLimit;
+  if (req.query.region && req.query.region !== "All"){
+    params.regionCode = req.query.region;
+  }
+
+  var json = youtube.searchList(params, function(json){
     res.status(200).json(json);
   });
 });
@@ -74,7 +81,7 @@ app.get('/videosList', function(req, res){
   var videoId = req.query.id;
   console.log("video id:" + videoId);
 
-  var json = youtube.videosList({id: videoId}, function(json){
+  var json = youtube.videosList({id: videoId, pageLimit: req.query.pageLimit}, function(json){
     res.status(200).json(json);
   });
 });

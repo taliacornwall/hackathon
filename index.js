@@ -1,2 +1,2 @@
-require('./app/index')
+require('./app/index');
 require("babel-polyfill");
