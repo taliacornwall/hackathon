@@ -34,7 +34,7 @@ function _channelsList(params, callback) {
   });
 };
 
-function _searchList (params, callback) {
+function _searchList (params, success, failure) {
 
   var extendedParams = Object.assign({}, params, {
     part: 'id',
@@ -45,20 +45,19 @@ function _searchList (params, callback) {
   youtube.search.list(
     extendedParams,
     function (err, data) {
-
-    var response;
-    if (err) {
-      response = {error: + err};
-      console.log(err);
-    }
-    if (data) {
-      response = data;
-    }
-    callback(response);
+      var response;
+      if (err) {
+        console.log(err);
+        failure();
+      } else if (data) {
+        success(data);
+      } else {
+        failure();
+      }
   });
 };
 
-function _videosList (params, callback) {
+function _videosList (params, success, failure) {
 
   var extendedParams = Object.assign({}, params, {
     part: 'id, snippet, statistics, contentDetails,player, topicDetails'
@@ -69,47 +68,65 @@ function _videosList (params, callback) {
   youtube.videos.list(
     extendedParams,
     function (err, data) {
-
-    var response;
-    if (err) {
-      response = {error: + err};
-      console.log(err);
-    }
-    if (data) {
-      response = data;
-    }
-    callback(response);
+      var response;
+      if (err) {
+        console.log(err);
+        failure();
+      } else if (data) {
+        success(data);
+      } else {
+        failure();
+      }
   });
 };
 
 // performs paginated search for any API call
-function _paginatedSearch(apiCall, params, callback, resultsSoFar){
+function _paginatedSearch(apiCall, params, callback, resultsSoFar, numTries){
 
   if (!resultsSoFar){
     resultsSoFar = [];
   }
 
-  apiCall(params, function(response){
+  var success = function(response){
     resultsSoFar.push(response);
+
     if (response.nextPageToken && 
-    resultsSoFar.length < RATE_LIMITED_PAGES && 
-    resultsSoFar.length < parseInt(params.pageLimit)){
-      params.pageToken = response.nextPageToken;
-      _paginatedSearch(apiCall, params, callback, resultsSoFar);
+      resultsSoFar.length < RATE_LIMITED_PAGES && 
+      resultsSoFar.length < parseInt(params.pageLimit)){
+      resultsSoFar.push()
+        params.pageToken = response.nextPageToken;
+        _paginatedSearch(apiCall, params, callback, resultsSoFar, 0);
     } else {
       callback(resultsSoFar);
     }
-  });
+  }
+
+  var failure = function(){
+    console.log("Failure. Trying again, attempt " + numTries);
+
+    if (numTries < 2){
+      setTimeout(
+        function(){
+          numTries = numTries +1;
+          _paginatedSearch(apiCall, params, callback, resultsSoFar, numTries);
+        },
+        3000
+      );
+    } else {
+      callback(resultsSoFar);
+    }
+  }
+  apiCall(params, success, failure);
 }
 
 function searchList(params, callback){
   console.log('Searching youtube...')
-  _paginatedSearch(_searchList, params, callback);
+  _paginatedSearch(_searchList, params, callback, [], 0);
 }
 
 function videosList(params, callback){
   console.log('Searching youtube for videos...')
-  _paginatedSearch(_videosList, params, callback);
+  _paginatedSearch(_videosList, params, callback, [], 0);
 }
 
 module.exports.searchList = searchList;

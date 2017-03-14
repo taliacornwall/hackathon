@@ -12817,14 +12817,15 @@ myConnector.getData = function (table, doneCallback) {
     $.each(resp, function (index, page) {
 
       var items = page.items;
-      var region = page.regionCode;
 
-      $.each(items, function (index, val) {
-        tableau.log("My console message goes here!");
-        if (val.id.videoId) {
-          promises.push(getVideoDetails(table, tableData, val.id.videoId));
-        }
-      });
+      if (items) {
+        $.each(items, function (index, val) {
+          tableau.log("My console message goes here!");
+          if (val.id.videoId) {
+            promises.push(getVideoDetails(table, tableData, val.id.videoId));
+          }
+        });
+      }
     });
 
     Promise.all(promises).then(function () {
@@ -12839,7 +12840,7 @@ myConnector.getData = function (table, doneCallback) {
 function getVideoDetails(table, tableData, id) {
   return new Promise(function (resolve, reject) {
     $.getJSON("http://localhost:3000/videosList", { id: id }, function (resp) {
-      if (resp.length > 0 && resp[0].items && resp[0].items.length > 0) {
+      if (resp && resp.length > 0 && resp[0].items && resp[0].items.length > 0) {
         var val = resp[0].items[0];
         var video = {};
         video.id = id;

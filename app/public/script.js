@@ -34,15 +34,16 @@ import videoCols from './helpers';
           $.each(resp, function(index, page){
 
               var items = page.items;
-              var region = page.regionCode;
 
-              // Iterate over the JSON object
-              $.each(items, function(index, val){
-                tableau.log("My console message goes here!");
-                if (val.id.videoId){
-                  promises.push(getVideoDetails(table, tableData, val.id.videoId));
-                }
-              });
+              if (items){
+                // Iterate over the JSON object
+                $.each(items, function(index, val){
+                  tableau.log("My console message goes here!");
+                  if (val.id.videoId){
+                    promises.push(getVideoDetails(table, tableData, val.id.videoId));
+                  }
+                });
+              }
           });
 
           Promise.all(promises).then(function(){
@@ -60,7 +61,7 @@ import videoCols from './helpers';
         "http://localhost:3000/videosList",
         {id: id}, 
         function(resp) {
-          if (resp.length > 0 && resp[0].items && resp[0].items.length > 0){
+          if (resp && resp.length > 0 && resp[0].items && resp[0].items.length > 0){
             var val = resp[0].items[0];
             var video = {}
             video.id = id;
