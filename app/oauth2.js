@@ -22,10 +22,10 @@ var OAuth2Client = google.auth.OAuth2;
 // https://code.google.com/apis/console
 
 // TODO: shouldn't be public on github
-var CLIENT_ID = '340113640761-1l78ovnpcbn4nv54u3rf5qj5n95po5rl.apps.googleusercontent.com';
-var CLIENT_SECRET = 'GH-RQ3PWpjJZqiRVjqEEeu0N';
-var REDIRECT_URL = 'http://localhost:3000/oauth';
-var API_KEY = 'AIzaSyAX3-iadtDzHYBtpo1AAcfgZxOPCU6Sx5I'; // specify your API key here
+var CLIENT_ID = process.env.CLIENT_ID;
+var CLIENT_SECRET = process.env.CLIENT_SECRET;
+var REDIRECT_URL = process.env.REDIRECT_URL;
+var API_KEY = process.env.API_KEY; // specify your API key here
 
 var client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 

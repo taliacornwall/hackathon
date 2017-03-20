@@ -19,9 +19,10 @@ import videoCols from './helpers';
     myConnector.getData = function(table, doneCallback) {
 
       var userInput = JSON.parse(tableau.connectionData);
+      var url = process.env.URL + "/searchList";
 
       $.getJSON(
-        "http://localhost:3000/searchList",
+        url,
         {q: userInput.query,
         pageLimit: userInput.pageLimit,
         region: userInput.region}, 
@@ -56,8 +57,11 @@ import videoCols from './helpers';
 
   function getVideoDetails(table, tableData, id) {
     return new Promise(function(resolve, reject) {
+
+      var url = process.env.URL + "/videosList";
+
       $.getJSON(
-        "http://localhost:3000/videosList",
+        url,
         {id: id}, 
         function(resp) {
           if (resp.length > 0 && resp[0].items && resp[0].items.length > 0){
